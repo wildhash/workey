@@ -65,7 +65,7 @@ export default function JobPipeline() {
         <ol className="text-sm text-slate-400 space-y-1 list-decimal list-inside">
           <li>Configure your <code className="text-brand-400">.env</code> file with API keys</li>
           <li>Run <code className="text-brand-400">cd apps/api && python server.py</code> to start the API</li>
-          <li>Click "Run Scout Agent" to discover your first job listings</li>
+          <li>Click &quot;Run Scout Agent&quot; to discover your first job listings</li>
           <li>Review scored jobs and approve tailored applications</li>
         </ol>
       </div>

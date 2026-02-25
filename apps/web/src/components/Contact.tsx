@@ -3,10 +3,10 @@ export default function Contact() {
     <section id="contact" className="py-24 px-4 sm:px-6">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-slate-100 mb-6">
-          Let's Build Something
+          Let&apos;s Build Something
         </h2>
         <p className="text-slate-400 mb-10 text-lg">
-          Looking for an AI engineer who ships? Let's talk about what you're building.
+          Looking for an AI engineer who ships? Let&apos;s talk about what you&apos;re building.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
