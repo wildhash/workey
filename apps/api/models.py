@@ -2,7 +2,7 @@
 from datetime import datetime
 from sqlalchemy import String, Integer, Float, Text, JSON, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from .database import Base
+from database import Base
 
 
 class Job(Base):

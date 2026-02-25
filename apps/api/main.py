@@ -1,5 +1,7 @@
 """Workey API - Main FastAPI application."""
 import os
+import sys
+from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,7 +9,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from .routers import jobs, applications, agents, portfolio
+# Support running as script from apps/api dir OR as module from project root
+_api_dir = Path(__file__).parent
+if str(_api_dir) not in sys.path:
+    sys.path.insert(0, str(_api_dir))
+
+from routers import jobs, applications, agents, portfolio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
 from pydantic import BaseModel
-from ..database import get_db, create_tables
-from ..models import Job, JobScore
+from database import get_db, create_tables
+from models import Job, JobScore
 
 router = APIRouter()
 
