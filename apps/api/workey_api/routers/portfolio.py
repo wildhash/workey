@@ -14,6 +14,12 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+try:
+    from workey_agents.agent_h_portfolio import PortfolioCuratorAgent
+except ImportError:  # pragma: no cover
+    logger.exception("Failed to import PortfolioCuratorAgent; portfolio endpoint will be unavailable")
+    PortfolioCuratorAgent = None  # type: ignore[assignment]
+
 
 def _resolve_data_dir() -> Path:
     if env_dir := os.getenv("WORKEY_DATA_DIR"):
@@ -30,20 +36,16 @@ def _resolve_data_dir() -> Path:
 DATA_DIR = _resolve_data_dir()
 PROJECTS_YAML_PATH = DATA_DIR / "projects.yaml"
 
-try:
-    from workey_agents.agent_h_portfolio import PortfolioCuratorAgent
-except ImportError:  # pragma: no cover
-    PortfolioCuratorAgent = None  # type: ignore[assignment]
-
 
 async def _read_yaml(path: Path) -> dict:
-    content = await anyio.to_thread.run_sync(path.read_text, encoding="utf-8")
-    data = yaml.safe_load(content)
-    if data is None:
-        return {}
-    if not isinstance(data, dict):
-        raise TypeError(f"YAML root must be a mapping, got {type(data).__name__}")
-    return data
+    def _load() -> dict:
+        content = path.read_text(encoding="utf-8")
+        data = yaml.safe_load(content) or {}
+        if not isinstance(data, dict):
+            raise TypeError(f"YAML root must be a mapping, got {type(data).__name__}")
+        return data
+
+    return await anyio.to_thread.run_sync(_load)
 
 
 @router.get("")
