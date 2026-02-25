@@ -1,14 +1,14 @@
 """Agents router - trigger agent runs."""
-import uuid
+
 import sys
-from datetime import datetime
-from typing import Optional
-from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+import uuid
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
-from database import get_db
-from models import Job, JobScore, Application, AgentRun
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from ..database import get_db
+from ..models import AgentRun, Job, JobScore
 
 router = APIRouter()
 
@@ -40,12 +40,14 @@ async def run_job_scout(
 ):
     """Trigger Job Scout agent to discover new listings."""
     run_id = str(uuid.uuid4())
-    
-    background_tasks.add_task(
-        _run_scout_task, run_id, req.query, req.location, req.use_mock
-    )
-    
-    return {"run_id": run_id, "status": "started", "message": "Job Scout running in background"}
+
+    background_tasks.add_task(_run_scout_task, run_id, req.query, req.location, req.use_mock)
+
+    return {
+        "run_id": run_id,
+        "status": "started",
+        "message": "Job Scout running in background",
+    }
 
 
 async def _run_scout_task(run_id: str, query: str, location: str, use_mock: bool):
@@ -54,9 +56,7 @@ async def _run_scout_task(run_id: str, query: str, location: str, use_mock: bool
     try:
         sys.path.insert(0, "/home/runner/work/workey/workey/packages/agents")
         from workey_agents.agent_a_job_scout import JobScoutAgent
-        from workey_agents.agent_b_match_scorer import MatchScorerAgent
-        from workey_agents.models_compat import save_jobs_to_db
-        
+
         scout = JobScoutAgent(use_mock=use_mock)
         jobs = await scout.discover(query=query, location=location)
         print(f"[Scout Task {run_id}] Found {len(jobs)} jobs")
@@ -71,12 +71,12 @@ async def score_job(job_id: str, use_llm: bool = False, db: AsyncSession = Depen
     job = result.scalar_one_or_none()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-    
+
     try:
         sys.path.insert(0, "/home/runner/work/workey/workey/packages/agents")
         from workey_agents.agent_b_match_scorer import MatchScorerAgent
         from workey_agents.schemas import JobListing
-        
+
         job_listing = JobListing(
             company=job.company,
             title=job.title,
@@ -87,14 +87,14 @@ async def score_job(job_id: str, use_llm: bool = False, db: AsyncSession = Depen
             jd_text=job.jd_text,
             tags=job.tags or [],
         )
-        
+
         scorer = MatchScorerAgent(use_llm=use_llm)
         score = await scorer.score(job_listing)
-        
+
         # Save score
         existing_score = await db.execute(select(JobScore).where(JobScore.job_id == job_id))
         job_score_rec = existing_score.scalar_one_or_none()
-        
+
         if job_score_rec:
             job_score_rec.total_score = score.total_score
             job_score_rec.role_relevance = score.role_relevance
@@ -122,11 +122,11 @@ async def score_job(job_id: str, use_llm: bool = False, db: AsyncSession = Depen
                 gaps=score.gaps,
             )
             db.add(job_score_rec)
-        
+
         job.score = score.total_score
         job.status = "scored"
         await db.commit()
-        
+
         return {"job_id": job_id, "score": score.model_dump()}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

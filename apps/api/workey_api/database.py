@@ -1,7 +1,9 @@
 """Database setup with SQLAlchemy async."""
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
-from config import get_settings
+
+from .config import get_settings
 
 
 class Base(DeclarativeBase):

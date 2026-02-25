@@ -1,12 +1,15 @@
 """Jobs router."""
+
 import uuid
 from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
 from pydantic import BaseModel
-from database import get_db, create_tables
-from models import Job, JobScore
+from sqlalchemy import desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from ..database import get_db
+from ..models import Job, JobScore
 
 router = APIRouter()
 
@@ -112,8 +115,11 @@ async def get_job(job_id: str, db: AsyncSession = Depends(get_db)):
 async def create_job(payload: JobCreate, db: AsyncSession = Depends(get_db)):
     """Manually add a job listing."""
     import hashlib
-    ingest_hash = hashlib.sha256(f"{payload.company}|{payload.title}|{payload.url}".lower().encode()).hexdigest()[:16]
-    
+
+    ingest_hash = hashlib.sha256(
+        f"{payload.company}|{payload.title}|{payload.url}".lower().encode()
+    ).hexdigest()[:16]
+
     job = Job(
         id=str(uuid.uuid4()),
         ingest_hash=ingest_hash,

@@ -1,13 +1,16 @@
 """SQLAlchemy ORM models."""
+
 from datetime import datetime
-from sqlalchemy import String, Integer, Float, Text, JSON, Boolean, DateTime, ForeignKey
+
+from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from database import Base
+
+from .database import Base
 
 
 class Job(Base):
     __tablename__ = "jobs"
-    
+
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     company: Mapped[str] = mapped_column(String(255))
     title: Mapped[str] = mapped_column(String(255))
@@ -25,15 +28,21 @@ class Job(Base):
     status: Mapped[str] = mapped_column(String(50), default="new")
     score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    job_score: Mapped["JobScore | None"] = relationship("JobScore", back_populates="job", uselist=False)
-    applications: Mapped[list["Application"]] = relationship("Application", back_populates="job")
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    job_score: Mapped["JobScore | None"] = relationship(
+        "JobScore", back_populates="job", uselist=False
+    )
+    applications: Mapped[list["Application"]] = relationship(
+        "Application", back_populates="job"
+    )
 
 
 class JobScore(Base):
     __tablename__ = "job_scores"
-    
+
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     job_id: Mapped[str] = mapped_column(String(36), ForeignKey("jobs.id"), unique=True)
     total_score: Mapped[int] = mapped_column(Integer)
@@ -47,13 +56,13 @@ class JobScore(Base):
     why_fit: Mapped[str] = mapped_column(Text, default="")
     gaps: Mapped[list] = mapped_column(JSON, default=list)
     scored_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    
+
     job: Mapped["Job"] = relationship("Job", back_populates="job_score")
 
 
 class Application(Base):
     __tablename__ = "applications"
-    
+
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     job_id: Mapped[str] = mapped_column(String(36), ForeignKey("jobs.id"))
     status: Mapped[str] = mapped_column(String(50), default="draft")
@@ -65,16 +74,20 @@ class Application(Base):
     ats_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
     applied_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
     job: Mapped["Job"] = relationship("Job", back_populates="applications")
 
 
 class ResumeVariant(Base):
     __tablename__ = "resume_variants"
-    
+
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
-    job_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("jobs.id"), nullable=True)
+    job_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("jobs.id"), nullable=True
+    )
     title: Mapped[str] = mapped_column(String(255))
     variant_type: Mapped[str] = mapped_column(String(50), default="ats")
     headline: Mapped[str] = mapped_column(String(255), default="")
@@ -88,7 +101,7 @@ class ResumeVariant(Base):
 
 class AgentRun(Base):
     __tablename__ = "agent_runs"
-    
+
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     agent_name: Mapped[str] = mapped_column(String(100))
     status: Mapped[str] = mapped_column(String(50), default="pending")
