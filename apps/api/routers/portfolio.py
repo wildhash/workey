@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 
 import anyio
@@ -13,10 +14,11 @@ router = APIRouter()
 
 logger = logging.getLogger(__name__)
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-DATA_DIR = REPO_ROOT / "data"
+DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = Path(os.getenv("WORKEY_REPO_ROOT", str(DEFAULT_REPO_ROOT))).resolve()
+DATA_DIR = Path(os.getenv("WORKEY_DATA_DIR", str(REPO_ROOT / "data"))).resolve()
 PROJECTS_YAML_PATH = DATA_DIR / "projects.yaml"
-AGENTS_DIR = REPO_ROOT / "packages" / "agents"
+AGENTS_DIR = Path(os.getenv("WORKEY_AGENTS_DIR", str(REPO_ROOT / "packages" / "agents"))).resolve()
 
 
 def _import_portfolio_agent():
@@ -24,8 +26,8 @@ def _import_portfolio_agent():
         from workey_agents.agent_h_portfolio import PortfolioCuratorAgent
 
         return PortfolioCuratorAgent
-    except ModuleNotFoundError:
-        pass
+    except ModuleNotFoundError as e:
+        logger.debug("PortfolioCuratorAgent not found on default sys.path: %s", e)
 
     try:
         import sys
@@ -36,8 +38,13 @@ def _import_portfolio_agent():
         from workey_agents.agent_h_portfolio import PortfolioCuratorAgent
 
         return PortfolioCuratorAgent
+    except ModuleNotFoundError:
+        logger.exception(
+            "PortfolioCuratorAgent module still not found after adding AGENTS_DIR to sys.path"
+        )
+        return None
     except Exception:
-        logger.exception("Failed to import PortfolioCuratorAgent")
+        logger.exception("Failed to import PortfolioCuratorAgent due to unexpected error")
         return None
 
 
@@ -71,6 +78,9 @@ async def list_projects():
     """List projects from data/projects.yaml."""
     try:
         data = await _read_yaml(PROJECTS_YAML_PATH)
+        if not isinstance(data, dict):
+            logger.error("Projects YAML root must be a mapping, got %s", type(data).__name__)
+            raise HTTPException(status_code=500, detail="Projects data is invalid")
         return data.get("projects", [])
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Projects data not found")
