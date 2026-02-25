@@ -52,3 +52,5 @@ coverage/
 
 # Turbo
 .turbo/
+apps/api/workey.db
+apps/web/.next/
