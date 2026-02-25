@@ -81,7 +81,13 @@ async def list_projects():
         if not isinstance(data, dict):
             logger.error("Projects YAML root must be a mapping, got %s", type(data).__name__)
             raise HTTPException(status_code=500, detail="Projects data is invalid")
-        return data.get("projects", [])
+
+        projects = data.get("projects", [])
+        if "projects" in data and not isinstance(projects, list):
+            logger.error("Projects YAML 'projects' must be a list, got %s", type(projects).__name__)
+            raise HTTPException(status_code=500, detail="Projects data is invalid")
+
+        return projects
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Projects data not found")
     except HTTPException:
