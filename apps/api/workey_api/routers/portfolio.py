@@ -17,7 +17,7 @@ router = APIRouter()
 try:
     from workey_agents.agent_h_portfolio import PortfolioCuratorAgent
 except ImportError:  # pragma: no cover
-    logger.exception("Failed to import PortfolioCuratorAgent; portfolio endpoint will be unavailable")
+    logger.warning("PortfolioCuratorAgent not available; portfolio endpoint will be unavailable")
     PortfolioCuratorAgent = None  # type: ignore[assignment]
 
 
@@ -30,7 +30,9 @@ def _resolve_data_dir() -> Path:
         if (candidate / "projects.yaml").exists():
             return candidate.resolve()
 
-    return (Path.cwd() / "data").resolve()
+    fallback = (Path.cwd() / "data").resolve()
+    logger.warning("No projects.yaml found in parents; falling back to %s", fallback)
+    return fallback
 
 
 DATA_DIR = _resolve_data_dir()
@@ -40,7 +42,10 @@ PROJECTS_YAML_PATH = DATA_DIR / "projects.yaml"
 async def _read_yaml(path: Path) -> dict:
     def _load() -> dict:
         content = path.read_text(encoding="utf-8")
-        data = yaml.safe_load(content) or {}
+        try:
+            data = yaml.safe_load(content) or {}
+        except yaml.YAMLError as e:
+            raise ValueError("Invalid YAML") from e
         if not isinstance(data, dict):
             raise TypeError(f"YAML root must be a mapping, got {type(data).__name__}")
         return data
@@ -56,8 +61,6 @@ async def get_portfolio():
     try:
         agent = PortfolioCuratorAgent()
         return await agent.build_portfolio_data()
-    except HTTPException:
-        raise
     except Exception:
         logger.exception("Portfolio sync failed")
         raise HTTPException(status_code=500, detail="Portfolio sync failed")
