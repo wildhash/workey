@@ -47,7 +47,7 @@ class WorkeyPipeline:
         print("\n[Pipeline] Phase 2: Scoring")
         scored = await self.scorer.score_batch(jobs)
         
-        # Phase 3: Classify and tailor high-scoring jobs
+        # Phase 3: Classify jobs by score
         packages = []
         auto_apply = [(j, s) for j, s in scored if s.total_score >= auto_tailor_threshold]
         queue_review = [(j, s) for j, s in scored if queue_review_threshold <= s.total_score < auto_tailor_threshold]
@@ -59,25 +59,30 @@ class WorkeyPipeline:
         print(f"  Archived (<{queue_review_threshold}): {len(archived)} jobs")
         
         # Phase 4: Tailor top jobs
-        print("\n[Pipeline] Phase 3: Tailoring top jobs")
-        for job, score in auto_apply:
-            print(f"  Tailoring: {job.title} @ {job.company} (score: {score.total_score})")
-            resume = None
-            outreach = None
-            
-            if self.tailor:
-                try:
-                    resume = await self.tailor.tailor(job)
-                except Exception as e:
-                    print(f"  [!] Resume tailor error: {e}")
-            
-            if self.cover_agent:
-                try:
-                    outreach = await self.cover_agent.draft(job, score)
-                except Exception as e:
-                    print(f"  [!] Cover letter error: {e}")
-            
-            packages.append(ApplicationPackage(job=job, score=score, resume=resume, outreach=outreach))
+        print("\n[Pipeline] Phase 4: Tailoring top jobs")
+        sem = asyncio.Semaphore(3)
+
+        async def build_package(job: JobListing, score: JobScore) -> ApplicationPackage:
+            async with sem:
+                print(f"  Tailoring: {job.title} @ {job.company} (score: {score.total_score})")
+                resume = None
+                outreach = None
+
+                if self.tailor:
+                    try:
+                        resume = await self.tailor.tailor(job)
+                    except Exception as e:
+                        print(f"  [!] Resume tailor error: {e}")
+
+                if self.cover_agent:
+                    try:
+                        outreach = await self.cover_agent.draft(job, score)
+                    except Exception as e:
+                        print(f"  [!] Cover letter error: {e}")
+
+                return ApplicationPackage(job=job, score=score, resume=resume, outreach=outreach)
+
+        packages.extend(await asyncio.gather(*(build_package(job, score) for job, score in auto_apply)))
         
         # Add queue_review jobs without tailoring
         for job, score in queue_review:
