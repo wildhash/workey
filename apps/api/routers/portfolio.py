@@ -38,8 +38,11 @@ PROJECTS_YAML_PATH = DATA_DIR / "projects.yaml"
 
 
 async def _read_yaml(path: Path) -> dict:
-    content = await asyncio.to_thread(path.read_text, encoding="utf-8")
-    return yaml.safe_load(content) or {}
+    def _load() -> dict:
+        content = path.read_text(encoding="utf-8")
+        return yaml.safe_load(content) or {}
+
+    return await asyncio.to_thread(_load)
 
 
 @router.get("")
