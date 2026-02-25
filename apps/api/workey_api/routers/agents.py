@@ -1,6 +1,4 @@
 """Agents router - trigger agent runs."""
-
-import sys
 import uuid
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
@@ -54,12 +52,13 @@ async def _run_scout_task(run_id: str, query: str, location: str, use_mock: bool
     """Background task for job scouting."""
     # Import here to avoid circular imports and optional dependency issues
     try:
-        sys.path.insert(0, "/home/runner/work/workey/workey/packages/agents")
         from workey_agents.agent_a_job_scout import JobScoutAgent
 
         scout = JobScoutAgent(use_mock=use_mock)
         jobs = await scout.discover(query=query, location=location)
         print(f"[Scout Task {run_id}] Found {len(jobs)} jobs")
+    except ImportError as e:
+        print(f"[Scout Task {run_id}] workey_agents not installed: {e}")
     except Exception as e:
         print(f"[Scout Task {run_id}] Error: {e}")
 
@@ -73,7 +72,6 @@ async def score_job(job_id: str, use_llm: bool = False, db: AsyncSession = Depen
         raise HTTPException(status_code=404, detail="Job not found")
 
     try:
-        sys.path.insert(0, "/home/runner/work/workey/workey/packages/agents")
         from workey_agents.agent_b_match_scorer import MatchScorerAgent
         from workey_agents.schemas import JobListing
 
@@ -128,6 +126,8 @@ async def score_job(job_id: str, use_llm: bool = False, db: AsyncSession = Depen
         await db.commit()
 
         return {"job_id": job_id, "score": score.model_dump()}
+    except ImportError as e:
+        raise HTTPException(status_code=503, detail="Scoring agents unavailable") from e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

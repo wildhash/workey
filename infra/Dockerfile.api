@@ -30,7 +30,7 @@ RUN pip install --no-cache-dir -e /app/packages/agents --no-deps
 COPY apps/api/ /app/apps/api/
 COPY data/ /app/data/
 
-WORKDIR /app/apps/api
+RUN pip install --no-cache-dir -e /app/apps/api --no-deps
 
 EXPOSE 8000
 
