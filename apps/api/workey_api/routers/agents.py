@@ -1,14 +1,18 @@
 """Agents router - trigger agent runs."""
+
+import logging
 import uuid
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..database import get_db
+from ..database import AsyncSessionLocal, get_db
 from ..models import AgentRun, Job, JobScore
 
 router = APIRouter()
+
+logger = logging.getLogger(__name__)
 
 
 class ScoutRequest(BaseModel):
@@ -57,6 +61,37 @@ async def _run_scout_task(run_id: str, query: str, location: str, use_mock: bool
         scout = JobScoutAgent(use_mock=use_mock)
         jobs = await scout.discover(query=query, location=location)
         print(f"[Scout Task {run_id}] Found {len(jobs)} jobs")
+
+        inserted = 0
+        async with AsyncSessionLocal() as db:
+            for job in jobs:
+                existing = await db.execute(select(Job).where(Job.ingest_hash == job.ingest_hash))
+                if existing.scalar_one_or_none() is not None:
+                    continue
+
+                db.add(
+                    Job(
+                        id=str(uuid.uuid4()),
+                        company=job.company,
+                        title=job.title,
+                        location=job.location,
+                        remote_type=job.remote_type,
+                        source=job.source,
+                        url=job.url,
+                        posted_at=job.posted_at,
+                        salary_min=job.salary_min,
+                        salary_max=job.salary_max,
+                        salary_currency=job.salary_currency,
+                        jd_text=job.jd_text,
+                        tags=job.tags,
+                        ingest_hash=job.ingest_hash,
+                    )
+                )
+                inserted += 1
+
+            await db.commit()
+
+        print(f"[Scout Task {run_id}] Inserted {inserted} new jobs")
     except ImportError as e:
         print(f"[Scout Task {run_id}] workey_agents not installed: {e}")
     except Exception as e:
@@ -127,9 +162,11 @@ async def score_job(job_id: str, use_llm: bool = False, db: AsyncSession = Depen
 
         return {"job_id": job_id, "score": score.model_dump()}
     except ImportError as e:
+        logger.warning("Scoring agents unavailable: %s", e)
         raise HTTPException(status_code=503, detail="Scoring agents unavailable") from e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        logger.exception("Job scoring failed for job_id=%s", job_id)
+        raise HTTPException(status_code=500, detail="Job scoring failed")
 
 
 @router.get("/runs")
