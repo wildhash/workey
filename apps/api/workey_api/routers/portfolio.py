@@ -79,7 +79,7 @@ async def list_projects():
         return projects
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Projects data not found")
-    except yaml.YAMLError:
+    except ValueError:
         logger.exception("Projects YAML is invalid")
         raise HTTPException(status_code=500, detail="Projects data is invalid")
     except HTTPException:
