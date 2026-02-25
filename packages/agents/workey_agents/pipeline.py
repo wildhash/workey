@@ -64,23 +64,27 @@ class WorkeyPipeline:
 
         async def build_package(job: JobListing, score: JobScore) -> ApplicationPackage:
             async with sem:
-                print(f"  Tailoring: {job.title} @ {job.company} (score: {score.total_score})")
-                resume = None
-                outreach = None
+                try:
+                    print(f"  Tailoring: {job.title} @ {job.company} (score: {score.total_score})")
+                    resume = None
+                    outreach = None
 
-                if self.tailor:
-                    try:
-                        resume = await self.tailor.tailor(job)
-                    except Exception as e:
-                        print(f"  [!] Resume tailor error: {e}")
+                    if self.tailor:
+                        try:
+                            resume = await self.tailor.tailor(job)
+                        except Exception as e:
+                            print(f"  [!] Resume tailor error: {e}")
 
-                if self.cover_agent:
-                    try:
-                        outreach = await self.cover_agent.draft(job, score)
-                    except Exception as e:
-                        print(f"  [!] Cover letter error: {e}")
+                    if self.cover_agent:
+                        try:
+                            outreach = await self.cover_agent.draft(job, score)
+                        except Exception as e:
+                            print(f"  [!] Cover letter error: {e}")
 
-                return ApplicationPackage(job=job, score=score, resume=resume, outreach=outreach)
+                    return ApplicationPackage(job=job, score=score, resume=resume, outreach=outreach)
+                except Exception as e:
+                    print(f"  [!] Unexpected packaging error for {job.title} @ {job.company}: {e}")
+                    return ApplicationPackage(job=job, score=score, resume=None, outreach=None)
 
         packages.extend(await asyncio.gather(*(build_package(job, score) for job, score in auto_apply)))
         
