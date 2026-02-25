@@ -19,8 +19,8 @@ services:
 
   api:
     build:
-      context: ../apps/api
-      dockerfile: ../../infra/Dockerfile.api
+      context: ../
+      dockerfile: infra/Dockerfile.api
     environment:
       DATABASE_URL: postgresql://workey:workey@db:5432/workey
       LLM_PROVIDER: ${LLM_PROVIDER:-openai}
