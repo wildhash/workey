@@ -1,0 +1,80 @@
+# Achievements library - maps to real, verifiable accomplishments
+# Used by Resume Tailor agent to select and rewrite bullets
+
+achievements:
+  - id: multi_agent_langraph
+    category: agentic_systems
+    tags: [langchain, langgraph, multi-agent, orchestration, python]
+    title: Multi-agent LangGraph orchestration
+    raw: Built stateful multi-agent workflows with LangGraph for autonomous task decomposition and execution
+    star_format:
+      situation: Needed autonomous execution of complex multi-step tasks
+      task: Architect a durable stateful agent workflow system
+      action: Implemented LangGraph-based multi-agent graph with specialized sub-agents, shared state, and conditional routing
+      result: Enabled autonomous end-to-end task execution with human-in-the-loop checkpoints
+
+  - id: voice_ai_livekit
+    category: voice_ai
+    tags: [livekit, elevenlabs, voice, realtime, websocket]
+    title: Real-time voice AI with LiveKit
+    raw: Built real-time voice AI application with LiveKit rooms, ElevenLabs TTS, and streaming LLM responses
+    star_format:
+      situation: Required low-latency voice interaction for AI assistant
+      task: Build real-time voice pipeline with sub-500ms response
+      action: Integrated LiveKit for WebRTC transport, ElevenLabs for TTS, and streamed LLM tokens in parallel
+      result: Achieved real-time conversational AI with natural latency
+
+  - id: algo_trading_system
+    category: trading_quant
+    tags: [trading, python, fastapi, websocket, postgresql]
+    title: Algorithmic trading platform (BotSpot.trade)
+    raw: Designed and built full algorithmic trading platform with signal generation, backtesting, and automated execution
+    star_format:
+      situation: Needed systematic approach to automated trading across multiple strategies
+      task: Build end-to-end trading system from signal generation to execution
+      action: Architected FastAPI backend, WebSocket real-time data feeds, multi-strategy backtesting engine, and DeFi execution layer
+      result: Platform supporting multiple concurrent strategies with real-time P&L tracking
+
+  - id: llm_provider_abstraction
+    category: ai_infrastructure
+    tags: [openai, anthropic, gemini, python, abstraction]
+    title: Pluggable LLM provider abstraction
+    raw: Built provider-agnostic LLM interface supporting OpenAI, Anthropic, and Gemini with unified API
+    star_format:
+      situation: Multiple projects needed flexibility to swap LLM providers
+      task: Create unified interface abstracting provider differences
+      action: Designed adapter pattern with common interface, streaming support, and automatic fallback
+      result: Projects can switch providers with single config change, reducing vendor lock-in
+
+  - id: defi_smart_contracts
+    category: blockchain
+    tags: [solidity, web3, defi, ethereum, smart-contracts]
+    title: DeFi smart contract development
+    raw: Wrote and deployed Solidity smart contracts for DeFi protocol integration and on-chain automation
+    star_format:
+      situation: Trading system needed on-chain execution capabilities
+      task: Develop secure smart contracts for automated DeFi interactions
+      action: Wrote Solidity contracts with access controls, tested with Hardhat, deployed to mainnet/testnet
+      result: Enabled trustless on-chain execution with audit trail
+
+  - id: rag_pipeline
+    category: ai_ml
+    tags: [rag, embeddings, vector-store, langchain, python]
+    title: Production RAG pipeline
+    raw: Built retrieval-augmented generation pipeline with vector store, chunking strategy, and reranking
+    star_format:
+      situation: LLM needed grounding in proprietary knowledge base
+      task: Build reliable RAG system with high retrieval accuracy
+      action: Implemented semantic chunking, embedding generation, FAISS/Chroma vector store, and cross-encoder reranking
+      result: Reduced hallucination rate and improved answer relevance significantly
+
+  - id: sixty_plus_repos
+    category: portfolio
+    tags: [open-source, github, prolific, breadth]
+    title: 60+ open-source repositories
+    raw: Shipped 60+ open-source projects spanning AI agents, DeFi, dev tools, voice AI, and automation
+    star_format:
+      situation: Continuous learning and building across AI/ML domains
+      task: Maintain high shipping velocity while covering diverse technical areas
+      action: Systematically built, documented, and published projects in AI agents, trading, voice, and tooling
+      result: Broad portfolio demonstrating platform thinking and execution speed

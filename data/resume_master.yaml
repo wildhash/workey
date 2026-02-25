@@ -1,0 +1,131 @@
+# Master Resume - Will Oak Wild
+# Source of truth for all resume variants
+# DO NOT fabricate or alter facts - all content must be verifiable
+
+candidate:
+  name: Will Oak Wild
+  title: AI/ML Engineer & Technical Founder
+  location: Remote / Southeast Asia
+  linkedin: https://linkedin.com/in/willoakwild
+  github: https://github.com/wildhash
+  summary: |
+    Builder of autonomous systems at the intersection of AI/ML, agentic workflows,
+    and real-time infrastructure. Shipped 60+ projects spanning multi-agent
+    orchestration, algorithmic trading, voice AI, and DeFi. Solo founder execution
+    with hackathon-proven velocity. Rare combination of AI/ML depth, full-stack
+    engineering, and deployment-ready product thinking.
+
+skills:
+  languages:
+    - Python
+    - TypeScript
+    - JavaScript
+    - Solidity
+    - SQL
+  frameworks:
+    - FastAPI
+    - Next.js
+    - React
+    - LangChain
+    - LangGraph
+    - CrewAI
+    - Node.js
+    - Express
+    - WebSockets
+  ai_ml:
+    - LLM Orchestration (GPT-4, Claude, Gemini)
+    - Multi-agent systems
+    - RAG pipelines
+    - Prompt engineering
+    - Fine-tuning
+    - Embeddings / vector stores
+    - Voice AI (LiveKit, ElevenLabs)
+  infrastructure:
+    - Docker
+    - PostgreSQL
+    - Redis
+    - Vercel
+    - Railway
+    - GitHub Actions
+    - REST APIs
+    - WebSocket servers
+  blockchain:
+    - Solidity smart contracts
+    - DeFi protocols
+    - Web3.js / Ethers.js
+    - On-chain data analysis
+
+experience:
+  - title: AI/ML Engineer & Founder
+    company: Independent / Consulting
+    period: 2022 - Present
+    type: self-employed
+    highlights:
+      - Architected and shipped multi-agent systems using LangGraph and CrewAI for autonomous workflows
+      - Built LLM orchestration layers with OpenAI, Anthropic, and Gemini provider abstraction
+      - Developed voice AI applications integrating LiveKit and ElevenLabs for real-time experiences
+      - Created algorithmic trading systems with autonomous signal generation and execution
+      - Delivered AI consulting engagements including system architecture and agent pipeline design
+      - Shipped 60+ open-source projects spanning AI agents, DeFi, dev tools, and productivity systems
+
+  - title: Founder
+    company: BotSpot.trade
+    period: 2023 - 2024
+    type: startup
+    highlights:
+      - Built algorithmic trading platform with automated signal generation and execution
+      - Designed multi-strategy backtesting engine and real-time market data pipelines
+      - Developed DeFi integration layer for on-chain trading automation
+      - Architected scalable backend with FastAPI, WebSockets, and PostgreSQL
+
+  - title: Founder / Architect
+    company: AlphaShield / AlphaGenesis
+    period: 2023 - 2024
+    type: startup
+    highlights:
+      - Designed AlphaShield risk management system for automated position protection
+      - Built AlphaGenesis signal generation engine with multi-model consensus
+      - Integrated real-time market data feeds and on-chain analytics
+
+  - title: Lead Engineer
+    company: Super Intelligent System (SIS)
+    period: 2024 - Present
+    type: project
+    highlights:
+      - Architecting agentic operating system for autonomous task execution
+      - Implementing multi-agent coordination with LangGraph stateful workflows
+      - Building tool-use layer with filesystem, web search, and code execution capabilities
+
+education:
+  - degree: Self-directed learning + applied engineering
+    notes: Extensive practical experience in AI/ML, distributed systems, and product engineering
+
+achievements:
+  - Coinbase Ambassador recognition
+  - OpenAI API credits grant recipient
+  - Multiple hackathon submissions and placements
+  - 60+ public GitHub repositories
+
+target_roles:
+  - AI Engineer
+  - ML Engineer
+  - Agentic Systems Engineer
+  - Applied AI Engineer
+  - Solutions Engineer (AI)
+  - Forward Deployed Engineer
+  - Full-Stack AI Product Engineer
+  - Quant/Automation Engineer
+
+target_geos:
+  - Remote (global)
+  - Vietnam
+  - Thailand
+  - Singapore
+  - Malaysia
+  - US Remote
+
+salary_range:
+  min: 80000
+  max: 250000
+  currency: USD
+  note: Flexible for equity-heavy roles at high-growth AI companies
