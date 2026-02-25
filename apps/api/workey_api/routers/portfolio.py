@@ -38,7 +38,9 @@ except ImportError:  # pragma: no cover
 
 async def _read_yaml(path: Path) -> dict:
     content = await anyio.to_thread.run_sync(path.read_text, encoding="utf-8")
-    data = yaml.safe_load(content) or {}
+    data = yaml.safe_load(content)
+    if data is None:
+        return {}
     if not isinstance(data, dict):
         raise TypeError(f"YAML root must be a mapping, got {type(data).__name__}")
     return data
@@ -64,9 +66,17 @@ async def list_projects():
     """List projects from data/projects.yaml."""
     try:
         data = await _read_yaml(PROJECTS_YAML_PATH)
-        return data.get("projects", [])
+        projects = data.get("projects", [])
+        if "projects" in data and not isinstance(projects, list):
+            logger.error("Projects YAML 'projects' must be a list, got %s", type(projects).__name__)
+            raise HTTPException(status_code=500, detail="Projects data is invalid")
+
+        return projects
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Projects data not found")
+    except ValueError:
+        logger.exception("Projects YAML is invalid")
+        raise HTTPException(status_code=500, detail="Projects data is invalid")
     except HTTPException:
         raise
     except TypeError:
