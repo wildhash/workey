@@ -1,27 +1,37 @@
 #!/usr/bin/env python3
 """Seed script - populates the database with sample data for development."""
+
+from __future__ import annotations
+
+import argparse
 import asyncio
-import sys
 import os
 import uuid
 from pathlib import Path
-from datetime import datetime
-
-# Add packages to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "packages" / "agents"))
-sys.path.insert(0, str(Path(__file__).parent.parent / "apps" / "api"))
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
-# Override to use SQLite for seeding
-os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///./workey.db")
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
-async def seed():
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Seed the Workey database with sample data")
+    parser.add_argument(
+        "--database-url",
+        default=os.getenv("DATABASE_URL"),
+        help="Database URL. Defaults to $DATABASE_URL if set, otherwise SQLite at repo root.",
+    )
+    return parser.parse_args()
+
+
+async def seed(database_url: str):
     """Seed sample jobs and initial data."""
+    os.environ["DATABASE_URL"] = database_url
+
     from workey_api.database import create_tables, AsyncSessionLocal
-    from workey_api.models import Job, Application
+    from workey_api.models import Job
     
     print("[Seed] Creating tables...")
     await create_tables()
@@ -91,4 +101,16 @@ async def seed():
 
 
 if __name__ == "__main__":
-    asyncio.run(seed())
+    args = _parse_args()
+
+    database_url = args.database_url
+    if not database_url:
+        db_path = REPO_ROOT / "workey.db"
+        database_url = f"sqlite+aiosqlite:///{db_path}"
+
+    try:
+        asyncio.run(seed(database_url=database_url))
+    except ImportError as e:
+        raise SystemExit(
+            "workey-api is not installed. Run: python -m pip install -e 'apps/api[dev]'"
+        ) from e
