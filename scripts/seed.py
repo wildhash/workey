@@ -26,10 +26,8 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-async def seed(database_url: str):
+async def seed():
     """Seed sample jobs and initial data."""
-    os.environ["DATABASE_URL"] = database_url
-
     from workey_api.database import create_tables, AsyncSessionLocal
     from workey_api.models import Job
     
@@ -106,11 +104,17 @@ if __name__ == "__main__":
     database_url = args.database_url
     if not database_url:
         db_path = REPO_ROOT / "workey.db"
+        print(f"[Seed] No DATABASE_URL provided; using SQLite at {db_path}")
         database_url = f"sqlite+aiosqlite:///{db_path}"
 
+    os.environ["DATABASE_URL"] = database_url
+
     try:
-        asyncio.run(seed(database_url=database_url))
+        asyncio.run(seed())
     except ImportError as e:
-        raise SystemExit(
-            "workey-api is not installed. Run: python -m pip install -e 'apps/api[dev]'"
-        ) from e
+        missing_name = getattr(e, "name", None) or ""
+        if missing_name.split(".")[0] == "workey_api":
+            raise SystemExit(
+                "workey-api is not installed. Run: python -m pip install -e apps/api"
+            ) from e
+        raise
