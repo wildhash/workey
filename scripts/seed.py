@@ -28,12 +28,18 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _resolve_database_url(cli_value: str | None) -> str:
-    if cli_value:
-        return cli_value
+    if cli_value is not None:
+        cli_value = cli_value.strip()
+        if cli_value:
+            return cli_value
+        raise SystemExit("--database-url was provided but is empty")
 
     env_value = os.getenv("DATABASE_URL")
-    if env_value:
-        return env_value
+    if env_value is not None:
+        env_value = env_value.strip()
+        if env_value:
+            return env_value
+        raise SystemExit("DATABASE_URL is set but empty; provide a valid URL or unset it")
 
     print(f"[Seed] No DATABASE_URL provided; using SQLite at {DEFAULT_SQLITE_PATH}")
     return f"sqlite+aiosqlite:///{DEFAULT_SQLITE_PATH}"
@@ -123,6 +129,6 @@ if __name__ == "__main__":
         missing_name = getattr(e, "name", None) or ""
         if missing_name == "workey_api" or missing_name.startswith("workey_api."):
             raise SystemExit(
-                "workey-api is not installed. Run: python -m pip install -e apps/api"
+                "Failed to import workey_api. If it's not installed, run: python -m pip install -e apps/api"
             ) from e
         raise
