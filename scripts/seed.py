@@ -15,15 +15,28 @@ load_dotenv()
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
+DEFAULT_SQLITE_PATH = REPO_ROOT / "workey.db"
+
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Seed the Workey database with sample data")
     parser.add_argument(
         "--database-url",
-        default=os.getenv("DATABASE_URL"),
         help="Database URL. Defaults to $DATABASE_URL if set, otherwise SQLite at repo root.",
     )
     return parser.parse_args()
+
+
+def _resolve_database_url(cli_value: str | None) -> str:
+    if cli_value:
+        return cli_value
+
+    env_value = os.getenv("DATABASE_URL")
+    if env_value:
+        return env_value
+
+    print(f"[Seed] No DATABASE_URL provided; using SQLite at {DEFAULT_SQLITE_PATH}")
+    return f"sqlite+aiosqlite:///{DEFAULT_SQLITE_PATH}"
 
 
 async def seed():
@@ -101,19 +114,14 @@ async def seed():
 if __name__ == "__main__":
     args = _parse_args()
 
-    database_url = args.database_url
-    if not database_url:
-        db_path = REPO_ROOT / "workey.db"
-        print(f"[Seed] No DATABASE_URL provided; using SQLite at {db_path}")
-        database_url = f"sqlite+aiosqlite:///{db_path}"
-
+    database_url = _resolve_database_url(args.database_url)
     os.environ["DATABASE_URL"] = database_url
 
     try:
         asyncio.run(seed())
     except ImportError as e:
         missing_name = getattr(e, "name", None) or ""
-        if missing_name.split(".")[0] == "workey_api":
+        if missing_name == "workey_api" or missing_name.startswith("workey_api."):
             raise SystemExit(
                 "workey-api is not installed. Run: python -m pip install -e apps/api"
             ) from e
