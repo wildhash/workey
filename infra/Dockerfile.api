@@ -1,0 +1,37 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY apps/api/pyproject.toml /tmp/workey-api-pyproject.toml
+COPY packages/agents/pyproject.toml /tmp/workey-agents-pyproject.toml
+
+RUN pip install --no-cache-dir hatchling && \
+    python - <<'PY'
+import subprocess
+import tomllib
+from pathlib import Path
+
+
+def _deps(pyproject_path: str) -> list[str]:
+    data = tomllib.loads(Path(pyproject_path).read_text(encoding="utf-8"))
+    deps = data.get("project", {}).get("dependencies")
+    if not deps:
+        raise SystemExit(f"No dependencies found in {pyproject_path}")
+    return list(deps)
+
+
+deps = [*_deps("/tmp/workey-api-pyproject.toml"), *_deps("/tmp/workey-agents-pyproject.toml")]
+subprocess.check_call(["pip", "install", "--no-cache-dir", *deps])
+PY
+
+COPY packages/agents/ /app/packages/agents/
+RUN pip install --no-cache-dir -e /app/packages/agents --no-deps
+
+COPY apps/api/ /app/apps/api/
+COPY data/ /app/data/
+
+RUN pip install --no-cache-dir -e /app/apps/api --no-deps
+
+EXPOSE 8000
+
+CMD ["uvicorn", "workey_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

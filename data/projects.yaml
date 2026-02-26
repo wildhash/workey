@@ -1,0 +1,117 @@
+# Projects inventory - source of truth for portfolio
+# Used by Portfolio Curator agent and Resume Tailor
+
+projects:
+  - id: botspot_trade
+    name: BotSpot.trade
+    category: trading_quant
+    status: shipped
+    featured: true
+    tags: [trading, python, fastapi, defi, websocket, postgresql, automation]
+    description: Algorithmic trading platform with automated signal generation, multi-strategy backtesting, and DeFi execution layer
+    tech_stack: [Python, FastAPI, WebSockets, PostgreSQL, Solidity, Web3.js]
+    highlights:
+      - Multi-strategy backtesting engine
+      - Real-time market data pipeline
+      - DeFi integration for on-chain execution
+      - Automated P&L tracking and risk management
+    recruiter_summary: Full-stack trading system demonstrating systems architecture, real-time data, and DeFi integration
+
+  - id: alphashield
+    name: AlphaShield
+    category: trading_quant
+    status: shipped
+    featured: true
+    tags: [risk-management, trading, python, automation]
+    description: Automated risk management system for position protection with dynamic stop-loss and portfolio balancing
+    tech_stack: [Python, FastAPI, PostgreSQL]
+    highlights:
+      - Dynamic position sizing and risk limits
+      - Automated stop-loss and take-profit execution
+      - Portfolio correlation analysis
+    recruiter_summary: Risk management engine showing quantitative thinking and real-time automation
+
+  - id: alphagenesisbot
+    name: AlphaGenesis
+    category: trading_quant
+    status: shipped
+    featured: true
+    tags: [signal-generation, ml, trading, multi-model]
+    description: Multi-model signal generation engine with consensus mechanism for high-confidence trade signals
+    tech_stack: [Python, LangChain, OpenAI, PostgreSQL]
+    highlights:
+      - Multi-model consensus for signal validation
+      - LLM-assisted market analysis
+      - Backtested signal quality metrics
+    recruiter_summary: AI-augmented trading signal system combining LLMs with quantitative analysis
+
+  - id: sis
+    name: Super Intelligent System (SIS)
+    category: agentic_systems
+    status: in_progress
+    featured: true
+    tags: [agents, langgraph, autonomous, orchestration, tools]
+    description: Agentic operating system for autonomous task execution with multi-agent coordination and tool use
+    tech_stack: [Python, LangGraph, OpenAI, FastAPI, PostgreSQL]
+    highlights:
+      - Multi-agent graph with specialized roles
+      - Tool-use layer (filesystem, web, code execution)
+      - Durable state management with checkpointing
+      - Human-in-the-loop approval gates
+    recruiter_summary: Production-grade agentic system showing deep LangGraph and multi-agent architecture expertise
+
+  - id: workey
+    name: Workey
+    category: agentic_systems
+    status: in_progress
+    featured: true
+    tags: [agents, job-search, automation, nextjs, fastapi, langgraph]
+    description: Autonomous job-acquisition OS with 8 specialized agents for job discovery, scoring, tailoring, and application management
+    tech_stack: [Python, TypeScript, FastAPI, Next.js, LangGraph, PostgreSQL]
+    highlights:
+      - 8 specialized AI agents for end-to-end job search
+      - Portfolio site + private command center dashboard
+      - Resume tailoring with integrity checks
+      - Application tracking with audit trail
+    recruiter_summary: Meta-project demonstrating agentic system design, full-stack AI, and applied ML engineering
+
+  - id: voice_ai_assistant
+    name: Voice AI Assistant
+    category: voice_ai
+    status: shipped
+    featured: true
+    tags: [livekit, elevenlabs, voice, realtime, webrtc]
+    description: Real-time voice AI assistant with LiveKit WebRTC transport and ElevenLabs TTS
+    tech_stack: [Python, LiveKit, ElevenLabs, OpenAI, WebSockets]
+    highlights:
+      - Sub-500ms response latency
+      - Streaming LLM token generation
+      - LiveKit room management
+      - ElevenLabs voice synthesis
+    recruiter_summary: Production voice AI system showing real-time infrastructure and LiveKit expertise
+
+categories:
+  agentic_systems:
+    label: Agentic Systems
+    description: Multi-agent workflows, LLM orchestration, and autonomous task execution
+    icon: robot
+  trading_quant:
+    label: Trading & Quant
+    description: Algorithmic trading, signal generation, risk management, and DeFi
+    icon: chart-line
+  voice_ai:
+    label: Voice AI
+    description: Real-time voice interfaces, TTS/STT, and conversational AI
+    icon: microphone
+  web3_defi:
+    label: Web3 & DeFi
+    description: Smart contracts, on-chain automation, and DeFi protocols
+    icon: link
+  dev_tools:
+    label: Dev Tools & Infra
+    description: Developer tooling, infrastructure, and automation utilities
+    icon: wrench
+  hackathon:
+    label: Hackathon Builds
+    description: Competition projects demonstrating rapid execution and creativity
+    icon: trophy

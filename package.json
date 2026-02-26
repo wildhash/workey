@@ -1,0 +1,26 @@
+{
+  "name": "workey",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Autonomous job-acquisition and personal-brand operating system",
+  "packageManager": "npm@11.10.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\""
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "prettier": "^3.2.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

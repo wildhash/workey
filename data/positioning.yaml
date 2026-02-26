@@ -1,0 +1,71 @@
+# Brand positioning and messaging for Will Oak Wild
+# Used by Cover Letter agent and Portfolio Curator
+
+positioning:
+  headline: Builder of Autonomous Systems
+  tagline: AI/ML Engineer who ships agentic systems, not just models
+  
+  elevator_pitch_short: |
+    I build autonomous systems that work—multi-agent workflows, real-time AI infrastructure,
+    and trading automation. 60+ shipped projects. Fast execution. Strong fundamentals.
+    
+  elevator_pitch_full: |
+    I'm an AI/ML engineer and technical founder specializing in agentic systems and
+    autonomous workflows. I've shipped 60+ projects spanning multi-agent orchestration
+    with LangGraph, voice AI with LiveKit, algorithmic trading platforms, and DeFi
+    automation. I bring rare breadth—AI/ML depth, full-stack engineering, and
+    deployment-ready product thinking—and I execute fast.
+
+  key_differentiators:
+    - 60+ shipped projects across AI/ML, trading, voice, and DeFi
+    - Deep LangGraph + multi-agent architecture expertise
+    - Full-stack AI: agents + API + frontend + deployment
+    - Voice AI and real-time systems (LiveKit, ElevenLabs)
+    - Algorithmic trading and DeFi automation background
+    - Solo founder execution speed
+    - "Builds the systems, not just the models"
+
+  tone_guidelines:
+    - elite but grounded
+    - technical but clear
+    - visionary but practical
+    - strong ownership energy
+    - founder/engineer language
+    - emphasize shipped systems over credentials
+    - show breadth as platform thinking, not scattershot
+
+  cover_letter_openings:
+    - "I build autonomous systems that work."
+    - "Multi-agent systems, real-time AI, and shipped products—that's the intersection I live in."
+    - "While most engineers talk about AI agents, I've been shipping them."
+
+  value_props_by_role:
+    ai_engineer:
+      - Deep LangGraph/LangChain expertise with production deployments
+      - LLM provider abstraction with OpenAI, Anthropic, Gemini
+      - RAG pipelines and vector store implementations
+      - 60+ AI/ML projects as proof of execution
+    
+    ml_engineer:
+      - Applied ML with focus on production systems
+      - Signal generation using ML models for trading
+      - LLM fine-tuning and prompt optimization
+      - Evaluation frameworks for agent quality
+    
+    agentic_systems:
+      - Multi-agent architectures with LangGraph (current best practice)
+      - Tool use: filesystem, web, code execution, API integration
+      - Durable state management and checkpointing
+      - Human-in-the-loop design patterns
+    
+    full_stack_ai:
+      - FastAPI backends with async patterns
+      - Next.js / React frontends with real-time updates
+      - WebSocket integration for live data
+      - Full deployment pipeline (Vercel + Railway)
+    
+    quant_automation:
+      - Algorithmic trading system architecture (BotSpot.trade)
+      - Signal generation with ML augmentation (AlphaGenesis)
+      - DeFi automation and smart contract integration
+      - Real-time data pipeline design
