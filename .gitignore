@@ -54,3 +54,10 @@ coverage/
 .turbo/
 workey.db
 apps/web/.next/
+
+# Workey local state
+memory/
+.venv/
+test_imports.py
+test_run.py
+test_live.py

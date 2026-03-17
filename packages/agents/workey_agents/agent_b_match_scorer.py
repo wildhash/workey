@@ -79,11 +79,13 @@ class MatchScorerAgent:
                 role_relevance += 4
         role_relevance = min(20, role_relevance)
         
-        # Skills overlap
-        jd_skills = set(jd_lower.split())
+        # Skills overlap - scan full JD text, not just word-split
         tag_skills = {t.lower() for t in job.tags}
-        overlap = WILL_SKILLS.intersection(jd_skills | tag_skills)
-        skills_overlap = min(20, len(overlap) * 2)
+        overlap = set()
+        for skill in WILL_SKILLS:
+            if skill in jd_lower or skill in tag_skills:
+                overlap.add(skill)
+        skills_overlap = min(20, len(overlap) * 3)
         
         # Seniority
         seniority_fit = 10
@@ -93,7 +95,7 @@ class MatchScorerAgent:
             seniority_fit = 15
         
         # Tech stack
-        tech_stack_fit = min(15, len(overlap) * 1)
+        tech_stack_fit = min(15, len(overlap) * 2)
         
         # Geo fit
         geo_text = job.location.lower() + " " + job.remote_type.lower()

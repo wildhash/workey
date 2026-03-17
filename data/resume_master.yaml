@@ -10,7 +10,7 @@ candidate:
   github: https://github.com/wildhash
   summary: |
     Builder of autonomous systems at the intersection of AI/ML, agentic workflows,
-    and real-time infrastructure. Shipped 60+ projects spanning multi-agent
+    and real-time infrastructure. Shipped 71+ projects spanning multi-agent
     orchestration, algorithmic trading, voice AI, and DeFi. Solo founder execution
     with hackathon-proven velocity. Rare combination of AI/ML depth, full-stack
     engineering, and deployment-ready product thinking.
@@ -103,8 +103,11 @@ education:
 achievements:
   - Coinbase Ambassador recognition
   - OpenAI API credits grant recipient
-  - Multiple hackathon submissions and placements
-  - 60+ public GitHub repositories
+  - DigitalOcean Gradient AI Hackathon 2026 (EverMem Sentinel)
+  - ERC-8004 AI Trading Agents Hackathon 2026
+  - AWS Aerospace/Cybersecurity Hackathon 2026
+  - 71 public GitHub repositories, 211 stars
+  - GitHub: YOLO badge, Pair Extraordinaire x3, Pull Shark x2
 
 target_roles:
   - AI Engineer

@@ -146,6 +146,8 @@ class JobScoutAgent:
         if use_mock:
             self.adapters.append(MockJobAdapter())
         else:
+            from .adapter_hn import HackerNewsAdapter
+            self.adapters.append(HackerNewsAdapter())
             self.adapters.append(RemoteOKAdapter())
             self.adapters.append(WellfoundAdapter())
     
