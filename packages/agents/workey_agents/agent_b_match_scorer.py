@@ -1,4 +1,4 @@
-"""Agent B: Match Scorer - Scores jobs against Will's profile."""
+﻿"""Agent B: Match Scorer - Scores jobs against Will's profile."""
 from __future__ import annotations
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
@@ -141,28 +141,59 @@ class MatchScorerAgent:
             action=action,
         )
     
+    def _clamp_score(self, data: dict) -> dict:
+        """Clamp LLM-returned scores to valid Pydantic ranges."""
+        limits = {
+            "role_relevance": 20, "skills_overlap": 20, "seniority_fit": 15,
+            "tech_stack_fit": 15, "geo_remote_fit": 10, "compensation_fit": 10,
+            "mission_fit": 10, "total_score": 100,
+        }
+        for field, mx in limits.items():
+            if field in data and isinstance(data[field], (int, float)):
+                data[field] = max(0, min(mx, int(data[field])))
+        return data
+
     async def score(self, job: JobListing) -> JobScore:
         """Score a job listing. Uses LLM if enabled, otherwise keyword scoring."""
         if not self.use_llm:
             return self._keyword_score(job)
         
         try:
-            result = await self.chain.ainvoke({
+            raw = await (self.prompt | self.llm).ainvoke({
                 "company": job.company,
                 "title": job.title,
                 "location": job.location,
                 "jd_text": job.jd_text[:3000],
                 "format_instructions": self.parser.get_format_instructions(),
             })
+            import json, re
+            text = raw.content if hasattr(raw, 'content') else str(raw)
+            match = re.search(r'\{[\s\S]*\}', text)
+            if match:
+                data = json.loads(match.group())
+                data = self._clamp_score(data)
+                return JobScore(**data)
+            result = self.parser.parse(text)
             return result
         except Exception as e:
             print(f"[MatchScorer] LLM error, falling back to keyword: {e}")
             return self._keyword_score(job)
     
     async def score_batch(self, jobs: list[JobListing]) -> list[tuple[JobListing, JobScore]]:
-        """Score multiple jobs."""
+        """Score multiple jobs concurrently in batches of 5."""
+        import asyncio
         results = []
-        for job in jobs:
-            score = await self.score(job)
-            results.append((job, score))
+        batch_size = 5
+        for i in range(0, len(jobs), batch_size):
+            batch = jobs[i:i + batch_size]
+            tasks = [asyncio.wait_for(self.score(job), timeout=30) for job in batch]
+            scores = await asyncio.gather(*tasks, return_exceptions=True)
+            for job, score in zip(batch, scores):
+                if isinstance(score, Exception):
+                    print(f"[MatchScorer] Timeout/error for {job.company}, using keyword: {score}")
+                    score = self._keyword_score(job)
+                results.append((job, score))
+            print(f"  [Scorer] Batch {i//batch_size + 1}/{(len(jobs)-1)//batch_size + 1} done")
         return results
+
+
